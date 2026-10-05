@@ -25,8 +25,4 @@ A simple console-based ATM application developed using **C++** to understand and
 - Object-Oriented Programming
 - Console Interface
 
-## How to Run
 
-### Compile
-```bash
-g++ atm.cpp -o atm
