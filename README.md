@@ -34,25 +34,7 @@ C++
 
 Object-Oriented Programming
 
-Console Interface
 
-How to Run
-g++ atm.cpp -o atm
-./atm
-
-
-For Windows:
-
-g++ atm.cpp -o atm.exe
-atm.exe
-
-Project Structure
-ATM-Interface/
-│
-├── atm.cpp
-└── README.md
-
-Purpose
 
 The purpose of this project is to gain practical understanding of OOP concepts in C++ by building a simple real-world ATM simulation.
 
