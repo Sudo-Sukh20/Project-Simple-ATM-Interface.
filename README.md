@@ -1,43 +1,32 @@
-#ATM Interface
+# ATM Interface
 
-A simple console-based ATM application developed using C++ to understand and implement fundamental Object-Oriented Programming (OOP) concepts.
+A simple console-based ATM application developed using **C++** to understand and implement fundamental **Object-Oriented Programming (OOP)** concepts.
 
-Features
+## Features
 
-PIN-based user authentication
+- PIN-based user authentication
+- Check account balance
+- Deposit money
+- Withdraw money
+- Exit the application
 
-Check account balance
+## OOP Concepts Used
 
-Deposit money
+- Classes and Objects
+- Encapsulation
+- Abstraction
+- Functions
+- Conditional Statements
+- Loops
 
-Withdraw money
+## Technologies Used
 
-Exit the application
+- C++
+- Object-Oriented Programming
+- Console Interface
 
-OOP Concepts Used
+## How to Run
 
-Classes and Objects
-
-Encapsulation
-
-Abstraction
-
-Functions
-
-Conditional Statements
-
-Loops
-
-Technologies Used
-
-C++
-
-Object-Oriented Programming
-
-
-
-The purpose of this project is to gain practical understanding of OOP concepts in C++ by building a simple real-world ATM simulation.
-
-Author
-
-Your Name
+### Compile
+```bash
+g++ atm.cpp -o atm
