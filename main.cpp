@@ -16,7 +16,7 @@ public:
     Account() {
         holderName = "";
         accNo = "";
-        int pin = -1;
+        pin = -1;
         balance = 0;
     }
 
@@ -81,8 +81,6 @@ public:
 
 int main() {
     //Account object creation for different ATM users
-    Account a;
-    a.createAccount();
 
     return 0;
 }
