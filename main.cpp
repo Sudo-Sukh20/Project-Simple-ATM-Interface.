@@ -59,12 +59,33 @@ public:
 
     // Member function to display the account details
     void displayAccount() {
-
+        cout<<"======ACCOUNT HOLDER'S DETAILS======\n";
+        cout<<"Account holder's name:"<<holderName<<endl;
+        cout<<"Account number:"<<accNo<<endl;
+        cout<<"Account balance:"<<balance<<endl;
     }
 
 
     // Member function to deposit money 
     void depositMoney() {
+        int amount;
+        int givenPin;
+        if(pin !=-1){
+            cout<<"Enter your pin:";
+            cin>>givenPin;
+            if(pin==givenPin){
+                cout<<"Enter the amount to deposit:";
+                cin>>amount;
+                balance+=amount;
+                cout<<"Amount deposited succesfully!"<<endl;
+                cout<<"Your current balance is:"<<balance<<"Rs."<<endl;
+            }else{
+                cout<<"Incorrect pin! Please try again."<<endl;
+            }
+        }else{
+            cout<<"You need to create an account first!"<<endl;
+        }
+        
 
     }
 
@@ -81,6 +102,21 @@ public:
 
 int main() {
     //Account object creation for different ATM users
+    Account acc1, acc2;
+
+    // Create accounts for two users
+    cout << "Creating account for User 1:\n";
+    acc1.createAccount();
+
+    cout << "\nCreating account for User 2:\n";
+    acc2.createAccount();
+
+    // Display account details
+    cout << "\nDisplaying account details for User 1:\n";
+    acc1.displayAccount();
+
+    cout << "\nDisplaying account details for User 2:\n";
+    acc2.displayAccount();
 
     return 0;
 }
