@@ -1,7 +1,0 @@
-#Ignore compiled executables
-*.exe
-*.out
-*.app
-#Ignore build and object directories
-*.o
-*.obj
