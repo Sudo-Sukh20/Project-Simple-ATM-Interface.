@@ -96,7 +96,29 @@ public:
 
     // Member function to display account holder's balance
     void checkBalance() {
+        int currPin;
+        int count = 0;
 
+        cout << "\n=========CHECK ACCOUNT BALANCE===========\n";
+
+        do{
+            cout << "Enter your PIN: ";
+            cin >> currPin;
+
+            if(currPin == pin) {
+                cout << "Your account balance is: " << balance << " Rs.\n";
+                return;
+            } else {
+                cout << "Incorrect Pin\n";
+                cout << 2 - count << " attempts left\n";
+            }
+            count++;
+
+        } while (currPin != pin && count != 3);
+
+        if(count == 3){
+            cout << "Multiple incorrect attempts.\nAccount Temporarily Blocked!\n";
+        }
     }
 };
 
