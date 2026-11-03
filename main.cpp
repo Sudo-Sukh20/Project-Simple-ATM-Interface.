@@ -91,12 +91,70 @@ public:
 
     // Member function to withdraw money
     void withdrawMoney() {
+        int currPin, money;
+        int count = 0;
+
+        cout << "\n=========WITHDRAW MONEY===========\n";
+
+        do{
+            cout << "Enter your PIN: ";
+            cin >> currPin;
+
+            if(currPin == pin) {
+                cout << "Enter the amount to withdraw: ";
+                cin >> money;
+                if(money >= balance) {
+                    balance -= money;
+
+                    cout << "Amount withdrawn successfully.\nCollect your money.\n";
+                    cout << "Your current account balance now is: " << balance << " Rs.\n";
+                    cout << "You may remove the card now\n";
+
+                    return;
+                } else {
+                    cout << "Insufficient balance!\nNo amount is deducted from your account.\n";
+                    cout << "Thankyou!\n";
+                }
+
+            } else {
+                cout << "Incorrect Pin\n";
+                cout << 2 - count << " attempts left\n";
+            }
+            count++;
+
+        } while (currPin != pin && count != 3);
+
+        if(count == 3){
+            cout << "Multiple incorrect attempts.\nAccount Temporarily Blocked!\n";
+        }        
 
     }
 
     // Member function to display account holder's balance
     void checkBalance() {
+        int currPin;
+        int count = 0;
 
+        cout << "\n=========CHECK ACCOUNT BALANCE===========\n";
+
+        do{
+            cout << "Enter your PIN: ";
+            cin >> currPin;
+
+            if(currPin == pin) {
+                cout << "Your account balance is: " << balance << " Rs.\n";
+                return;
+            } else {
+                cout << "Incorrect Pin\n";
+                cout << 2 - count << " attempts left\n";
+            }
+            count++;
+
+        } while (currPin != pin && count != 3);
+
+        if(count == 3){
+            cout << "Multiple incorrect attempts.\nAccount Temporarily Blocked!\n";
+        }
     }
 };
 
