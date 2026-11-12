@@ -19,7 +19,7 @@ public:
     // Public member functions
 
     Account();
-    bool VerifyPin();
+    bool verifyPin();
     void createAccount();
     void displayAccount();
     void depositMoney();
@@ -40,43 +40,39 @@ Account::Account()
 }
 
 // Member function to verify the PIN
-bool Account::VerifyPin()
+bool Account::verifyPin()
 {
+    int enteredPin;
 
     if (isBlocked)
     {
-        cout << "Account is temporarily blocked. "
-             << "Please contact your bank.\n";
+        cout << "Account is temporarily blocked. Please contact your bank.\n";
         return false;
     }
 
-    int enteredPin;
-
-    cout << "Enter your PIN: ";
-    cin >> enteredPin;
-
-    if (enteredPin == pin)
+    do
     {
-        failedAttempts = 0;
-        return true;
-    }
+        // Take pin from the user
+        cout << "Enter your PIN: ";
+        cin >> enteredPin;
 
-    failedAttempts++;
+        if (enteredPin == pin) // if the pin entered by the user is correct, return true bcz the pin is verified.
+        {
+            failedAttempts = 0;
+            return true;
+        }
 
-    cout << "Incorrect PIN!\n";
+        failedAttempts++;
+        cout << "Incorrect PIN!\n";
+        cout << 3 - failedAttempts << " attempts remaining.\n";
 
+    } while (enteredPin != pin && failedAttempts < 3);
+    
     if (failedAttempts >= 3)
     {
         isBlocked = true;
-        cout << "Account blocked due to multiple "
-             << "incorrect PIN attempts.\n";
+        cout << "Account temporarily blocked due to multiple incorrect PIN attempts.\n";
     }
-    else
-    {
-        cout << 3 - failedAttempts
-             << " attempts remaining.\n";
-    }
-
     return false;
 }
 
@@ -158,7 +154,7 @@ void Account::depositMoney()
 
     cout << "\n========= DEPOSIT MONEY =========\n";
 
-    if (VerifyPin())
+    if (verifyPin())
     {
 
         long long amount;
@@ -196,7 +192,7 @@ void Account::withdrawMoney()
 
     cout << "\n========= WITHDRAW MONEY =========\n";
 
-    if (VerifyPin())
+    if (verifyPin())
     {
 
         cout << "Enter the amount to withdraw: ";
@@ -232,7 +228,7 @@ void Account::checkBalance()
 
     cout << "\n========= CHECK BALANCE =========\n";
 
-    if (VerifyPin())
+    if (verifyPin())
     {
 
         cout << "Your account balance is: "
@@ -243,101 +239,104 @@ void Account::checkBalance()
 }
 
 int main()
-{
+{   Account a1;
+    a1.createAccount();
+    a1.verifyPin();
 
-    int n;
 
-    cout << "====== ATM MANAGEMENT SYSTEM ======\n";
+    // int n;
 
-    cout << "Enter the number of users: ";
-    cin >> n;
+    // cout << "====== ATM MANAGEMENT SYSTEM ======\n";
 
-    if (n <= 0)
-    {
-        cout << "Invalid number of users!\n";
-        return 0;
-    }
+    // cout << "Enter the number of users: ";
+    // cin >> n;
 
-    // Dynamically create accounts for multiple users
-    Account *accounts = new Account[n];
+    // if (n <= 0)
+    // {
+    //     cout << "Invalid number of users!\n";
+    //     return 0;
+    // }
 
-    // Create accounts
-    for (int i = 0; i < n; i++)
-    {
-        cout << "\nCreating account for User " << i + 1 << ":\n";
-        accounts[i].createAccount();
-    }
+    // // Dynamically create accounts for multiple users
+    // Account *accounts = new Account[n];
 
-    int userChoice, choice;
+    // // Create accounts
+    // for (int i = 0; i < n; i++)
+    // {
+    //     cout << "\nCreating account for User " << i + 1 << ":\n";
+    //     accounts[i].createAccount();
+    // }
 
-    // ATM operations for all users
-    do
-    {
+    // int userChoice, choice;
 
-        cout << "\n====== ATM USER MENU ======\n";
-        cout << "Enter user number (1 to " << n << "): ";
-        cout << "\nEnter 0 to exit.\n";
-        cin >> userChoice;
+    // // ATM operations for all users
+    // do
+    // {
 
-        if (userChoice == 0)
-        {
-            break;
-        }
+    //     cout << "\n====== ATM USER MENU ======\n";
+    //     cout << "Enter user number (1 to " << n << "): ";
+    //     cout << "\nEnter 0 to exit.\n";
+    //     cin >> userChoice;
 
-        if (userChoice < 1 || userChoice > n)
-        {
-            cout << "Invalid user number!\n";
-            continue;
-        }
+    //     if (userChoice == 0)
+    //     {
+    //         break;
+    //     }
 
-        do
-        {
+    //     if (userChoice < 1 || userChoice > n)
+    //     {
+    //         cout << "Invalid user number!\n";
+    //         continue;
+    //     }
 
-            cout << "\n======= ATM SERVICES =======\n";
-            cout << "1. Deposit Money\n";
-            cout << "2. Withdraw Money\n";
-            cout << "3. Check Balance\n";
-            cout << "4. Display Account Details\n";
-            cout << "0. Back to User Menu\n";
+    //     do
+    //     {
 
-            cout << "Enter your choice: ";
-            cin >> choice;
+    //         cout << "\n======= ATM SERVICES =======\n";
+    //         cout << "1. Deposit Money\n";
+    //         cout << "2. Withdraw Money\n";
+    //         cout << "3. Check Balance\n";
+    //         cout << "4. Display Account Details\n";
+    //         cout << "0. Back to User Menu\n";
 
-            switch (choice)
-            {
+    //         cout << "Enter your choice: ";
+    //         cin >> choice;
 
-            case 1:
-                accounts[userChoice - 1].depositMoney();
-                break;
+    //         switch (choice)
+    //         {
 
-            case 2:
-                accounts[userChoice - 1].withdrawMoney();
-                break;
+    //         case 1:
+    //             accounts[userChoice - 1].depositMoney();
+    //             break;
 
-            case 3:
-                accounts[userChoice - 1].checkBalance();
-                break;
+    //         case 2:
+    //             accounts[userChoice - 1].withdrawMoney();
+    //             break;
 
-            case 4:
-                accounts[userChoice - 1].displayAccount();
-                break;
+    //         case 3:
+    //             accounts[userChoice - 1].checkBalance();
+    //             break;
 
-            case 0:
-                cout << "Returning to user menu...\n";
-                break;
+    //         case 4:
+    //             accounts[userChoice - 1].displayAccount();
+    //             break;
 
-            default:
-                cout << "Invalid choice! Try again.\n";
-            }
+    //         case 0:
+    //             cout << "Returning to user menu...\n";
+    //             break;
 
-        } while (choice != 0);
+    //         default:
+    //             cout << "Invalid choice! Try again.\n";
+    //         }
 
-    } while (true);
+    //     } while (choice != 0);
 
-    // Release dynamically allocated memory
-    delete[] accounts;
+    // } while (true);
 
-    cout << "Thank you for using our ATM services!\n";
+    // // Release dynamically allocated memory
+    // delete[] accounts;
+
+    // cout << "Thank you for using our ATM services!\n";
 
     return 0;
 }
