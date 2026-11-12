@@ -2,7 +2,8 @@
 #include <string>
 using namespace std;
 
-class Account {
+class Account
+{
 
     // Private data members
     string holderName;
@@ -15,198 +16,234 @@ class Account {
     bool isCreated;
 
 public:
+    // Public member functions
 
-    // Default constructor
-    Account() {
-        holderName = "";
-        accNo = "";
-        pin = -1;
-        balance = 0;
-        isBlocked = false;
-        failedAttempts = 0;
-        isCreated = false;
-    }
+    Account();
+    bool VerifyPin();
+    void createAccount();
+    void displayAccount();
+    void depositMoney();
+    void withdrawMoney();
+    void checkBalance();
+};
 
-    // Member function to verify the PIN
-    bool VerifyPin() {
+// Default constructor
+Account::Account()
+{
+    holderName = "";
+    accNo = "";
+    pin = -1;
+    balance = 0;
+    isBlocked = false;
+    failedAttempts = 0;
+    isCreated = false;
+}
 
-        if (isBlocked) {
-            cout << "Account is temporarily blocked. "
-                 << "Please contact your bank.\n";
-            return false;
-        }
+// Member function to verify the PIN
+bool Account::VerifyPin()
+{
 
-        int enteredPin;
-
-        cout << "Enter your PIN: ";
-        cin >> enteredPin;
-
-        if (enteredPin == pin) {
-            failedAttempts = 0;
-            return true;
-        }
-
-        failedAttempts++;
-
-        cout << "Incorrect PIN!\n";
-
-        if (failedAttempts >= 3) {
-            isBlocked = true;
-            cout << "Account blocked due to multiple "
-                 << "incorrect PIN attempts.\n";
-        }
-        else {
-            cout << 3 - failedAttempts
-                 << " attempts remaining.\n";
-        }
-
+    if (isBlocked)
+    {
+        cout << "Account is temporarily blocked. "
+             << "Please contact your bank.\n";
         return false;
     }
 
-    // Member function to create an account
-    void createAccount() {
+    int enteredPin;
 
-        int pin1, pin2;
-        int count = 0;
+    cout << "Enter your PIN: ";
+    cin >> enteredPin;
 
-        cout << "\nEnter your bank account number: ";
-        cin >> ws;
-        getline(cin, accNo);
-
-        cout << "Enter your name: ";
-        getline(cin, holderName);
-
-        do {
-
-            cout << "Set your PIN (4-digit): ";
-            cin >> pin1;
-
-            cout << "Re-enter the same PIN: ";
-            cin >> pin2;
-
-            if (pin1 == pin2 && pin1 >= 1000 && pin1 <= 9999) {
-
-                pin = pin1;
-                isCreated = true;
-
-                cout << "\nPIN set successfully!\n";
-                cout << "Account created successfully!\n";
-                break;
-            }
-            else {
-                cout << "Invalid PIN! Both PINs must match "
-                     << "and contain exactly 4 digits.\n";
-            }
-
-            count++;
-
-        } while (count < 3);
-
-        if (!isCreated) {
-            isBlocked = true;
-            cout << "Account creation failed. Card blocked.\n";
-        }
+    if (enteredPin == pin)
+    {
+        failedAttempts = 0;
+        return true;
     }
 
-    // Member function to display account details
-    void displayAccount() {
+    failedAttempts++;
 
-        if (!isCreated) {
-            cout << "Account not created successfully.\n";
-            return;
-        }
+    cout << "Incorrect PIN!\n";
 
-        cout << "\n====== ACCOUNT HOLDER DETAILS ======\n";
-        cout << "Account holder name: " << holderName << endl;
-        cout << "Account number: " << accNo << endl;
-        cout << "Account balance: " << balance << " Rs.\n";
+    if (failedAttempts >= 3)
+    {
+        isBlocked = true;
+        cout << "Account blocked due to multiple "
+             << "incorrect PIN attempts.\n";
+    }
+    else
+    {
+        cout << 3 - failedAttempts
+             << " attempts remaining.\n";
     }
 
-    // Member function to deposit money
-    void depositMoney() {
+    return false;
+}
 
-        if (!isCreated) {
-            cout << "Create an account first!\n";
-            return;
+// Member function to create an account
+void Account::createAccount()
+{
+
+    int pin1, pin2;
+    int count = 0;
+
+    cout << "\nEnter your bank account number: ";
+    cin >> ws;
+    getline(cin, accNo);
+
+    cout << "Enter your name: ";
+    getline(cin, holderName);
+
+    do
+    {
+
+        cout << "Set your PIN (4-digit): ";
+        cin >> pin1;
+
+        cout << "Re-enter the same PIN: ";
+        cin >> pin2;
+
+        if (pin1 == pin2 && pin1 >= 1000 && pin1 <= 9999)
+        {
+
+            pin = pin1;
+            isCreated = true;
+
+            cout << "\nPIN set successfully!\n";
+            cout << "Account created successfully!\n";
+            break;
+        }
+        else
+        {
+            cout << "Invalid PIN! Both PINs must match "
+                 << "and contain exactly 4 digits.\n";
         }
 
-        cout << "\n========= DEPOSIT MONEY =========\n";
+        count++;
 
-        if (VerifyPin()) {
+    } while (count < 3);
 
-            long long amount;
+    if (!isCreated)
+    {
+        isBlocked = true;
+        cout << "Account creation failed. Card blocked.\n";
+    }
+}
 
-            cout << "Enter the amount to deposit: ";
-            cin >> amount;
+// Member function to display account details
+void Account::displayAccount()
+{
 
-            if (amount > 0) {
-
-                balance += amount;
-
-                cout << "Amount deposited successfully!\n";
-                cout << "Current balance: "
-                     << balance << " Rs.\n";
-            }
-            else {
-                cout << "Invalid deposit amount!\n";
-            }
-        }
+    if (!isCreated)
+    {
+        cout << "Account not created successfully.\n";
+        return;
     }
 
-    // Member function to withdraw money
-    void withdrawMoney() {
+    cout << "\n====== ACCOUNT HOLDER DETAILS ======\n";
+    cout << "Account holder name: " << holderName << endl;
+    cout << "Account number: " << accNo << endl;
+    cout << "Account balance: " << balance << " Rs.\n";
+}
 
-        if (!isCreated) {
-            cout << "Create an account first!\n";
-            return;
-        }
+// Member function to deposit money
+void Account::depositMoney()
+{
 
-        long long money;
-
-        cout << "\n========= WITHDRAW MONEY =========\n";
-
-        if (VerifyPin()) {
-
-            cout << "Enter the amount to withdraw: ";
-            cin >> money;
-
-            if (money > 0 && money <= balance) {
-
-                balance -= money;
-
-                cout << "Amount withdrawn successfully!\n";
-                cout << "Collect your money.\n";
-                cout << "Current balance: "
-                     << balance << " Rs.\n";
-            }
-            else {
-                cout << "Invalid amount or insufficient balance!\n";
-                cout << "No amount deducted from your account.\n";
-            }
-        }
+    if (!isCreated)
+    {
+        cout << "Create an account first!\n";
+        return;
     }
 
-    // Member function to check account balance
-    void checkBalance() {
+    cout << "\n========= DEPOSIT MONEY =========\n";
 
-        if (!isCreated) {
-            cout << "Create an account first!\n";
-            return;
-        }
+    if (VerifyPin())
+    {
 
-        cout << "\n========= CHECK BALANCE =========\n";
+        long long amount;
 
-        if (VerifyPin()) {
+        cout << "Enter the amount to deposit: ";
+        cin >> amount;
 
-            cout << "Your account balance is: "
+        if (amount > 0)
+        {
+
+            balance += amount;
+
+            cout << "Amount deposited successfully!\n";
+            cout << "Current balance: "
                  << balance << " Rs.\n";
-
-            cout << "Thank you for using our ATM services!\n";
+        }
+        else
+        {
+            cout << "Invalid deposit amount!\n";
         }
     }
-};
+}
 
-int main() {
+// Member function to withdraw money
+void Account::withdrawMoney()
+{
+
+    if (!isCreated)
+    {
+        cout << "Create an account first!\n";
+        return;
+    }
+
+    long long money;
+
+    cout << "\n========= WITHDRAW MONEY =========\n";
+
+    if (VerifyPin())
+    {
+
+        cout << "Enter the amount to withdraw: ";
+        cin >> money;
+
+        if (money > 0 && money <= balance)
+        {
+
+            balance -= money;
+
+            cout << "Amount withdrawn successfully!\n";
+            cout << "Collect your money.\n";
+            cout << "Current balance: "
+                 << balance << " Rs.\n";
+        }
+        else
+        {
+            cout << "Invalid amount or insufficient balance!\n";
+            cout << "No amount deducted from your account.\n";
+        }
+    }
+}
+
+// Member function to check account balance
+void Account::checkBalance()
+{
+
+    if (!isCreated)
+    {
+        cout << "Create an account first!\n";
+        return;
+    }
+
+    cout << "\n========= CHECK BALANCE =========\n";
+
+    if (VerifyPin())
+    {
+
+        cout << "Your account balance is: "
+             << balance << " Rs.\n";
+
+        cout << "Thank you for using our ATM services!\n";
+    }
+}
+
+int main()
+{
 
     int n;
 
@@ -215,16 +252,18 @@ int main() {
     cout << "Enter the number of users: ";
     cin >> n;
 
-    if (n <= 0) {
+    if (n <= 0)
+    {
         cout << "Invalid number of users!\n";
         return 0;
     }
 
     // Dynamically create accounts for multiple users
-    Account* accounts = new Account[n];
+    Account *accounts = new Account[n];
 
     // Create accounts
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
+    {
         cout << "\nCreating account for User " << i + 1 << ":\n";
         accounts[i].createAccount();
     }
@@ -232,23 +271,27 @@ int main() {
     int userChoice, choice;
 
     // ATM operations for all users
-    do {
+    do
+    {
 
         cout << "\n====== ATM USER MENU ======\n";
         cout << "Enter user number (1 to " << n << "): ";
         cout << "\nEnter 0 to exit.\n";
         cin >> userChoice;
 
-        if (userChoice == 0) {
+        if (userChoice == 0)
+        {
             break;
         }
 
-        if (userChoice < 1 || userChoice > n) {
+        if (userChoice < 1 || userChoice > n)
+        {
             cout << "Invalid user number!\n";
             continue;
         }
 
-        do {
+        do
+        {
 
             cout << "\n======= ATM SERVICES =======\n";
             cout << "1. Deposit Money\n";
@@ -260,30 +303,31 @@ int main() {
             cout << "Enter your choice: ";
             cin >> choice;
 
-            switch (choice) {
+            switch (choice)
+            {
 
-                case 1:
-                    accounts[userChoice - 1].depositMoney();
-                    break;
+            case 1:
+                accounts[userChoice - 1].depositMoney();
+                break;
 
-                case 2:
-                    accounts[userChoice - 1].withdrawMoney();
-                    break;
+            case 2:
+                accounts[userChoice - 1].withdrawMoney();
+                break;
 
-                case 3:
-                    accounts[userChoice - 1].checkBalance();
-                    break;
+            case 3:
+                accounts[userChoice - 1].checkBalance();
+                break;
 
-                case 4:
-                    accounts[userChoice - 1].displayAccount();
-                    break;
+            case 4:
+                accounts[userChoice - 1].displayAccount();
+                break;
 
-                case 0:
-                    cout << "Returning to user menu...\n";
-                    break;
+            case 0:
+                cout << "Returning to user menu...\n";
+                break;
 
-                default:
-                    cout << "Invalid choice! Try again.\n";
+            default:
+                cout << "Invalid choice! Try again.\n";
             }
 
         } while (choice != 0);
