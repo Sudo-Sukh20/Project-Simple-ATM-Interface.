@@ -111,8 +111,7 @@ void Account::createAccount()
         }
         else
         {
-            cout << "Invalid PIN! Both PINs must match "
-                 << "and contain exactly 4 digits.\n";
+            cout << "Invalid PIN! Both PINs must match and contain exactly 4 digits.\n";
         }
 
         count++;
@@ -121,8 +120,7 @@ void Account::createAccount()
 
     if (!isCreated)
     {
-        isBlocked = true;
-        cout << "Account creation failed. Card blocked.\n";
+        cout << "Account creation failed because the entered PINs do not match.\n";
     }
 }
 
@@ -239,9 +237,9 @@ void Account::checkBalance()
 }
 
 int main()
-{   Account a1;
+{   Account a1, a2;
     a1.createAccount();
-    a1.verifyPin();
+    a2.createAccount();
 
 
     // int n;
