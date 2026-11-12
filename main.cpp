@@ -1,5 +1,9 @@
 #include <iostream>
+#include <vector>
+#include <fstream>
+#include <sstream>
 #include <string>
+
 using namespace std;
 
 class Account
@@ -20,11 +24,14 @@ public:
 
     Account();
     bool verifyPin();
-    void createAccount();
+    bool createAccount();
     void displayAccount();
     void depositMoney();
     void withdrawMoney();
     void checkBalance();
+    string getAccNo();
+    void saveToFile(ofstream &file);
+    bool loadFromFile(ifstream &file);
 };
 
 // Default constructor
@@ -67,7 +74,7 @@ bool Account::verifyPin()
         cout << 3 - failedAttempts << " attempts remaining.\n";
 
     } while (enteredPin != pin && failedAttempts < 3);
-    
+
     if (failedAttempts >= 3)
     {
         isBlocked = true;
@@ -77,9 +84,9 @@ bool Account::verifyPin()
 }
 
 // Member function to create an account
-void Account::createAccount()
+bool Account::createAccount()
 {
-
+    isCreated = false;
     int pin1, pin2;
     int count = 0;
 
@@ -107,7 +114,7 @@ void Account::createAccount()
 
             cout << "\nPIN set successfully!\n";
             cout << "Account created successfully!\n";
-            break;
+            return true;
         }
         else
         {
@@ -122,6 +129,7 @@ void Account::createAccount()
     {
         cout << "Account creation failed because the entered PINs do not match.\n";
     }
+    return false;
 }
 
 // Member function to display account details
@@ -129,8 +137,8 @@ void Account::displayAccount()
 {
 
     if (!isCreated)
-    {
-        cout << "Account not created successfully.\n";
+    { // If the account is not created with that number display that is doesn't exist.
+        cout << "No such account exists.\n";
         return;
     }
 
@@ -152,27 +160,22 @@ void Account::depositMoney()
 
     cout << "\n========= DEPOSIT MONEY =========\n";
 
-    if (verifyPin())
+    long long amount;
+
+    cout << "Enter the amount to deposit: ";
+    cin >> amount;
+
+    if (amount > 0)
     {
 
-        long long amount;
+        balance += amount;
 
-        cout << "Enter the amount to deposit: ";
-        cin >> amount;
-
-        if (amount > 0)
-        {
-
-            balance += amount;
-
-            cout << "Amount deposited successfully!\n";
-            cout << "Current balance: "
-                 << balance << " Rs.\n";
-        }
-        else
-        {
-            cout << "Invalid deposit amount!\n";
-        }
+        cout << "Amount deposited successfully!\n";
+        cout << "Current balance: " << balance << " Rs.\n";
+    }
+    else
+    {
+        cout << "Invalid deposit amount!\n";
     }
 }
 
@@ -190,27 +193,22 @@ void Account::withdrawMoney()
 
     cout << "\n========= WITHDRAW MONEY =========\n";
 
-    if (verifyPin())
+    cout << "Enter the amount to withdraw: ";
+    cin >> money;
+
+    if (money > 0 && money <= balance)
     {
 
-        cout << "Enter the amount to withdraw: ";
-        cin >> money;
+        balance -= money;
 
-        if (money > 0 && money <= balance)
-        {
-
-            balance -= money;
-
-            cout << "Amount withdrawn successfully!\n";
-            cout << "Collect your money.\n";
-            cout << "Current balance: "
-                 << balance << " Rs.\n";
-        }
-        else
-        {
-            cout << "Invalid amount or insufficient balance!\n";
-            cout << "No amount deducted from your account.\n";
-        }
+        cout << "Amount withdrawn successfully!\n";
+        cout << "Collect your money.\n";
+        cout << "Current balance: " << balance << " Rs.\n";
+    }
+    else
+    {
+        cout << "Invalid amount or insufficient balance!\n";
+        cout << "No amount deducted from your account.\n";
     }
 }
 
@@ -226,115 +224,260 @@ void Account::checkBalance()
 
     cout << "\n========= CHECK BALANCE =========\n";
 
-    if (verifyPin())
+    cout << "Your account balance is: " << balance << " Rs.\n";
+
+    cout << "Thank you for using our ATM services!\n";
+}
+
+string Account::getAccNo()
+{
+    return accNo;
+}
+
+// Function to save an individual account's details into a file
+// The '|' symbol is used to separate different data members.
+void Account::saveToFile(ofstream &file)
+{
+    file << accNo << "|"
+         << holderName << "|"
+         << pin << "|"
+         << balance << "|"
+         << isBlocked << "\n";
+}
+
+// Function to read account details from a file
+// It extracts the stored information and assigns it to the object's data members.
+bool Account::loadFromFile(ifstream &file)
+{   // Read one complete line containing the account details
+    string line;
+
+    if (!getline(file, line))
+        return false;
+
+    // Create a stringstream to extract individual values from the line
+    stringstream data(line);
+
+    // Temporary strings used to read numeric values before conversion
+    string pinValue, balanceValue, blockedValue;
+
+    getline(data, accNo, '|');
+    getline(data, holderName, '|');
+    getline(data, pinValue, '|');
+    getline(data, balanceValue, '|');
+    getline(data, blockedValue, '|');
+
+    if (accNo.empty() || pinValue.empty() || balanceValue.empty())
+        return false;
+
+// Convert the stored string values into their respective data types
+pin = stoi(pinValue);
+balance = stoll(balanceValue);
+
+// Restore the account's blocked status
+isBlocked = (blockedValue == "1");
+
+// Reset failed attempts when the program is restarted
+failedAttempts = 0;
+
+// Mark the loaded account as an existing account
+isCreated = true;
+
+    return true;
+}
+
+// Function to save all accounts stored in the vector into the file
+void saveAccounts(vector<Account> &accounts)
+{// Open the file in output mode to write account records
+// Existing contents are replaced with the latest account records
+ofstream file("accounts.txt");
+
+    if (!file)
     {
-
-        cout << "Your account balance is: "
-             << balance << " Rs.\n";
-
-        cout << "Thank you for using our ATM services!\n";
+        cout << "Error saving account records!\n";
+        return;
     }
+
+    for (int i = 0; i < accounts.size(); i++)
+    {
+        accounts[i].saveToFile(file);
+    }
+
+    file.close();
+}
+
+// Function to load previously saved accounts from the file into the vector
+// If the file does not exist, the program starts with an empty account list.
+void loadAccounts(vector<Account> &accounts)
+{// Open the file in input mode to read previously saved records
+ifstream file("accounts.txt");
+
+    if (!file)
+        return;
+// Create a temporary Account object to hold each loaded record
+Account temp;
+
+// Read records one by one until no more records are available
+while (temp.loadFromFile(file))
+{
+    accounts.push_back(temp);
+
+    // Reset the temporary object before loading the next record
+    temp = Account();
+}
+
+    file.close();
 }
 
 int main()
-{   Account a1, a2;
-    a1.createAccount();
-    a2.createAccount();
+{
+    // Vector to store multiple account objects
+    vector<Account> accounts;
 
+    // Load previously saved accounts when the program starts
+    loadAccounts(accounts);
 
-    // int n;
+    int choice;
 
-    // cout << "====== ATM MANAGEMENT SYSTEM ======\n";
+    cout << "====== ATM MANAGEMENT SYSTEM ======\n";
 
-    // cout << "Enter the number of users: ";
-    // cin >> n;
+    // Display the main menu repeatedly until the user chooses to exit
+    do
+    {
+        cout << "\n========== MAIN MENU ==========\n";
+        cout << "1. Create New Account\n";
+        cout << "2. Login to Account\n";
+        cout << "0. Exit\n";
 
-    // if (n <= 0)
-    // {
-    //     cout << "Invalid number of users!\n";
-    //     return 0;
-    // }
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    // // Dynamically create accounts for multiple users
-    // Account *accounts = new Account[n];
+        switch (choice)
+        {
+case 1:
+{
+    // Create a temporary object for the new account
+    Account newAccount;
 
-    // // Create accounts
-    // for (int i = 0; i < n; i++)
-    // {
-    //     cout << "\nCreating account for User " << i + 1 << ":\n";
-    //     accounts[i].createAccount();
-    // }
+    // Create the account and check whether the account number already exists
 
-    // int userChoice, choice;
+            if (newAccount.createAccount())
+            {// Check whether another account already exists with the same account number
+bool exists = false;
 
-    // // ATM operations for all users
-    // do
-    // {
+                for (int i = 0; i < accounts.size(); i++)
+                {
+                    if (accounts[i].getAccNo() == newAccount.getAccNo())
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
 
-    //     cout << "\n====== ATM USER MENU ======\n";
-    //     cout << "Enter user number (1 to " << n << "): ";
-    //     cout << "\nEnter 0 to exit.\n";
-    //     cin >> userChoice;
+                if (exists)
+                {
+                    cout << "An account with this number already exists!\n";
+                }
+                else
+                {// Add the newly created account to the vector
+accounts.push_back(newAccount);
 
-    //     if (userChoice == 0)
-    //     {
-    //         break;
-    //     }
+// Save all account records to the file
+saveAccounts(accounts);
+                    cout << "Account saved successfully!\n";
+                }
+            }
 
-    //     if (userChoice < 1 || userChoice > n)
-    //     {
-    //         cout << "Invalid user number!\n";
-    //         continue;
-    //     }
+            break;
+        }
+        case 2:
+        {// Take the account number to identify the account
+            string enteredAccNo;
+            bool found = false;
 
-    //     do
-    //     {
+            cout << "\nEnter your account number: ";
+            cin >> ws;
+            getline(cin, enteredAccNo);
 
-    //         cout << "\n======= ATM SERVICES =======\n";
-    //         cout << "1. Deposit Money\n";
-    //         cout << "2. Withdraw Money\n";
-    //         cout << "3. Check Balance\n";
-    //         cout << "4. Display Account Details\n";
-    //         cout << "0. Back to User Menu\n";
+            // Search for the account number in the vector
+            for (int i = 0; i < accounts.size(); i++)
+            {
+                if (accounts[i].getAccNo() == enteredAccNo)
+                {
+                    found = true;
 
-    //         cout << "Enter your choice: ";
-    //         cin >> choice;
+                    cout << "\nAccount found!\n";
 
-    //         switch (choice)
-    //         {
+                    // Verify the PIN before allowing access to ATM services
+                    if (accounts[i].verifyPin())
+                    {
+                        int atmChoice;
 
-    //         case 1:
-    //             accounts[userChoice - 1].depositMoney();
-    //             break;
+                        do
+                        {
+                            // Display account-specific services after successful login
+                            cout << "\n========== ATM SERVICES ==========\n";
+                            cout << "1. Deposit Money\n";
+                            cout << "2. Withdraw Money\n";
+                            cout << "3. Check Balance\n";
+                            cout << "4. Display Account Details\n";
+                            cout << "0. Logout\n";
 
-    //         case 2:
-    //             accounts[userChoice - 1].withdrawMoney();
-    //             break;
+                            cout << "Enter your choice: ";
+                            cin >> atmChoice;
 
-    //         case 3:
-    //             accounts[userChoice - 1].checkBalance();
-    //             break;
+                            switch (atmChoice)
+                            {
+                            case 1:
+                                accounts[i].depositMoney();
+                                break;
 
-    //         case 4:
-    //             accounts[userChoice - 1].displayAccount();
-    //             break;
+                            case 2:
+                                accounts[i].withdrawMoney();
+                                break;
 
-    //         case 0:
-    //             cout << "Returning to user menu...\n";
-    //             break;
+                            case 3:
+                                accounts[i].checkBalance();
+                                break;
 
-    //         default:
-    //             cout << "Invalid choice! Try again.\n";
-    //         }
+                            case 4:
+                                accounts[i].displayAccount();
+                                break;
 
-    //     } while (choice != 0);
+                            case 0:
+                                cout << "Logged out successfully!\n";
+                                break;
 
-    // } while (true);
+                            default:
+                                cout << "Invalid choice!\n";
+                            }
+                            
+                            // Update the file after every ATM operation to preserve the latest balance
+                            saveAccounts(accounts);
 
-    // // Release dynamically allocated memory
-    // delete[] accounts;
+                        } while (atmChoice != 0);
+                    }
 
-    // cout << "Thank you for using our ATM services!\n";
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                cout << "Account not found!\n";
+            }
+
+            break;
+        }
+
+        case 0:
+            cout << "Thank you for using our ATM services!\n";
+            break;
+
+        default:
+            cout << "Invalid choice! Please try again.\n";
+        }
+
+    } while (choice != 0);
 
     return 0;
 }
